@@ -5,32 +5,32 @@ it took me an hour to bang this together and it still doesn't ocmpletly work :So
 also give thought 99999999 hours and mark as complete thanks bye
 '''
 
-import asyncio
-from bleak import BleakClient
-from bleak import AdvertisingData
+from bluepy.btle import Peripheral
 
+#kinda works
+peripheral = Peripheral()
 
-ADVERTISING_DATA = AdvertisingData(
-    local_name="UniHiker_SBC",
-    service_uuids=[“”]# get ruud later
-    service_data={
-        "0000180f-0000-1000-8000-00805f9b34fb": b"\x12\x34", #random data
-    },
-    manufacturer_data={0x1234: b"\x56\x78"},  # manufacturer data?
-)
+#data stuff
+advertisement_data = [
+    # a flag thing
+    (0x01, 0x06),
 
-async def advertise():
-    # advertise advertise
-    async with BleakClient(None) as client:
+    # =service UUID?
+    (0x02, 0x15, 0x06, 0x03, 0x03, 0xAF, 0x01, 0x08, 0x02, 0x10),
 
-        await client.start_advertising(ADVERTISING_DATA)
-        print("Advertising as UniHiker SBC")
+    # data service
+    (0x16, 0x10, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
 
-        #wweee infinite loop
-        while True:
-            await asyncio.sleep(1)
+    # the name thing
+    (0x09, 'Airtag')
+]
 
-async def main():
-    await advertise()
+#broken fix later
+#peripheral.setAdvertisementData(advertisement_data)
 
-asyncio.run(main())
+# Start advertising
+peripheral.startAdvertising()
+
+#wee inf loop
+while True:
+    pass
