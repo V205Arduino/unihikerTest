@@ -5,32 +5,45 @@ it took me an hour to bang this together and it still doesn't ocmpletly work :So
 also give thought 99999999 hours and mark as complete thanks bye
 '''
 
-from bluepy.btle import Peripheral
 
-#kinda works
-peripheral = Peripheral()
+#!/usr/bin/env python3
 
-#data stuff
-advertisement_data = [
-    # a flag thing
-    (0x01, 0x06),
+import sys
+from time import sleep
 
-    # =service UUID?
-    (0x02, 0x15, 0x06, 0x03, 0x03, 0xAF, 0x01, 0x08, 0x02, 0x10),
+from bleson import get_provider, Advertiser, Advertisement
 
-    # data service
-    (0x16, 0x10, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00),
+WAIT_TIME = int(sys.argv[1]) if len(sys.argv)>1 else 10
 
-    # the name thing
-    (0x09, 'Airtag')
-]
+""" Bluetooth LE AdvertisementReport
 
-#broken fix later
-#peripheral.setAdvertisementData(advertisement_data)
+       :param address: Bluetooth Device Adress
+       :param name: device name
+       :param rssi: device RSSI
+       :param tx_power: device transmit power
+       :param raw_data: pre-rolled advertisement payload
+       :type address: BDAddress
+       :type name: str
+       :type rssi: integer
+       :type tx_power: integer
+       :type raw_data: bytearray on Linux (HCI data) or a dictionary on macOS/Win
 
-# Start advertising
-peripheral.startAdvertising()
+       .. testsetup:: *
 
-#wee inf loop
-while True:
-    pass
+          from bleson.core.types import Advertisement, BDAddress
+
+       Example of initialisation with list:
+
+       .. testcode:: ADV_REPORT_1
+
+          print(Advertisement(address=BDAddress('12:34:56:78:90:AB'), name='bleson', rssi=-99, tx_power=0))
+
+       Output:
+
+       .. testoutput:: ADV_REPORT_1
+
+          Advertisement(flags=0x06, name='bleson', txpower=0, uuid16s=[], uuid128s=[], rssi=-99, mfg_data=None)
+
+       """
+with Advertiser(get_provider().get_adapter(), Advertisement(name='bleson')):
+    sleep(WAIT_TIME)
